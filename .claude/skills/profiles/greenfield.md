@@ -34,7 +34,7 @@ description: >
 | 11. Manuals | YES | Developer manual (API reference, architecture, examples) + User/operator manual (functional description, workflows). |
 | 12. Security scan | YES | Full security checklist. |
 
-## Analysis Phase (Step 1)
+## Step 1 Specialization: Analysis — Codebase Scan
 
 For greenfield work, analysis means understanding the existing codebase:
 

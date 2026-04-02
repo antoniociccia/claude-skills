@@ -96,13 +96,13 @@ src/
 
 ## 6. Development Index
 
-### Bug Fix Progress (6-step)
+### Bug Fix Progress (bugfix profile: steps 1, 4, 5, 6, 8, 10)
 
-| Bug | 1-Repro | 4-Plan | 5-RegTest | 6-Fix | 8-IntTest | 10-E2E | Done? |
-|-----|---------|--------|-----------|-------|-----------|--------|-------|
-| #142 order total rounding | Y | Y | Y | Y | Y | Y | YES |
-| #157 duplicate webhook fire | Y | Y | Y | Y | Y | - | NO |
-| #163 auth token expiry race | Y | Y | - | - | - | - | NO |
+| Bug | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | Done? |
+|-----|---|---|---|---|---|---|---|---|---|----|----|-----|-------|
+| #142 order total rounding | Y | -- | -- | Y | Y | Y | -- | Y | -- | Y | -- | -- | YES |
+| #157 duplicate webhook fire | Y | -- | -- | Y | Y | Y | -- | Y | -- | - | -- | -- | NO |
+| #163 auth token expiry race | Y | -- | -- | Y | - | - | -- | - | -- | - | -- | -- | NO |
 
 ### Test Counts
 

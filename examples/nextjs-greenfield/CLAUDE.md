@@ -116,14 +116,14 @@ src/
 
 ## 6. Development Index
 
-### Feature Progress (11-step, no parity)
+### Feature Progress (greenfield profile: no parity step)
 
-| Feature | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10 | 11 | 12 | Complete? |
-|---------|---|---|---|---|---|---|---|---|----|----|-----|-----------|
-| auth | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y | YES |
-| analytics-dashboard | Y | Y | Y | Y | Y | Y | - | - | - | - | - | NO |
-| reports | Y | Y | - | - | - | - | - | - | - | - | - | NO |
-| settings | - | - | - | - | - | - | - | - | - | - | - | NO |
+| Feature | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | Complete? |
+|---------|---|---|---|---|---|---|---|---|---|----|----|-----|-----------|
+| auth | Y | Y | Y | Y | Y | Y | Y | Y | -- | Y | Y | Y | YES |
+| analytics-dashboard | Y | Y | Y | Y | Y | Y | - | - | -- | - | - | - | NO |
+| reports | Y | Y | - | - | - | - | - | - | -- | - | - | - | NO |
+| settings | - | - | - | - | - | - | - | - | -- | - | - | - | NO |
 
 ### Test Counts
 

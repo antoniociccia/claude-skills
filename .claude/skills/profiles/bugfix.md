@@ -34,7 +34,7 @@ description: >
 | 11. Manuals | -- | Not needed for bugs. |
 | 12. Security scan | conditional | Only if the bug is security-related. |
 
-## Bug Reproduction Protocol (Step 1)
+## Step 1 Specialization: Analysis — Reproduce the Bug
 
 ### Required Information
 

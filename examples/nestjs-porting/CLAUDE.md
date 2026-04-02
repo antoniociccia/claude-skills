@@ -169,6 +169,7 @@ All 12 steps active (porting profile):
 
 ## 9. Legacy Reference
 
+<!-- Replace with your actual legacy source path -->
 The original Java source code is at `legacy/inventory-service/` in this repo.
 
 - Java sources: `legacy/inventory-service/src/main/java/com/example/inventory/`

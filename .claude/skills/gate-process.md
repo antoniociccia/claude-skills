@@ -17,9 +17,11 @@ description: >
 
 ## Step Catalog
 
-STEP  1: ANALYSIS           Understand what exists.
-                             Profile determines scope: legacy analysis,
-                             codebase scan, bug reproduction, or infra audit.
+STEP  1: ANALYSIS           Understand what exists before changing anything.
+                             The step name is always "Analysis" but the SCOPE
+                             varies by profile: legacy analysis (porting),
+                             codebase scan (greenfield), bug reproduction
+                             (bugfix), or infrastructure audit (infra).
 
 STEP  2: FUNCTIONAL DOC     Business rationale, actors, input/output, rules.
                              → Invoke functional-doc skill.

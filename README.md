@@ -4,6 +4,8 @@ A generic, reusable development framework for Claude Code. Configurable 12-step 
 
 Drop it into any project. Pick a profile. Claude follows the process.
 
+**Who is this for?** Teams and solo developers using Claude Code who want structured, repeatable workflows with quality gates. If your project is a quick script or prototype, this framework is overkill -- just code. If you're building production software, this keeps Claude disciplined.
+
 ## Quick Start
 
 1. **Copy the `.claude/` directory** into your project root
@@ -66,6 +68,8 @@ Agents are specialized sub-agents that handle specific tasks.
 | `parity-tester` | sonnet | Generate dual-endpoint parity test scripts |
 | `swagger-generator` | sonnet | Detect API framework, generate OpenAPI annotations |
 | `security-scanner` | sonnet | Framework-aware static analysis, 10 checks |
+
+> **Model selection:** Agents use `sonnet` by default for complex reasoning tasks. `manual-writer` uses `haiku` for faster, cost-effective document generation. Override models in agent frontmatter to match your needs.
 
 ## Customization
 

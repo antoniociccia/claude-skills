@@ -38,7 +38,7 @@ description: >
 | 11. Manuals | YES | Runbook: how to operate, troubleshoot, and recover. |
 | 12. Security scan | YES | Secrets exposure, permissions, network policies, image vulnerabilities. |
 
-## Current State Audit (Step 1)
+## Step 1 Specialization: Analysis — Infrastructure Audit
 
 ### What to Document
 

@@ -69,7 +69,7 @@ If the legacy code has a bug that writes wrong data, replicate the bug first, th
 - [ ] Integration test with DB parity assertion written
 - [ ] Endpoint marked done in tracking document
 
-## Legacy Analysis Checklist
+## Step 1 Specialization: Analysis — Legacy Analysis
 
 When analyzing a legacy endpoint, extract:
 
