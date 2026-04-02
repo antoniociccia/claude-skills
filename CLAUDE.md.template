@@ -1,0 +1,156 @@
+# CLAUDE.md — [Project Name]
+
+> [One-line project description]
+> Started: [DATE]
+
+---
+
+## Profile
+
+```yaml
+active_profile: porting | greenfield | bugfix | infra
+```
+
+---
+
+## 1. Principles
+
+1. **[Principle 1]** — Description.
+2. **[Principle 2]** — Description.
+3. **TDD mandatory** — No production code without preceding tests. Red → Green → Refactor.
+4. **No `any`** — TypeScript strict mode (or equivalent strict typing for your language).
+5. **Conventional Commits** — `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`.
+6. **Max 300 lines per file, max 20 lines per function**.
+7. **Update this file after every feature** — Development index, test counts, security column.
+
+---
+
+## 2. Stack
+
+| Layer | Technology | License |
+|-------|-----------|---------|
+| **Backend** | | |
+| **Database** | | |
+| **Auth** | | |
+| **Validation** | | |
+| **Test** | | |
+| **Build** | | |
+| **Logging** | | |
+| **Deploy** | | |
+
+---
+
+## 3. Architecture
+
+```
+src/
+├── ...
+```
+
+### Patterns
+
+- **ORM**: [what ORM/query builder]
+- **Validation**: [what validation library]
+- **Auth**: [how auth works]
+- **Error handling**: [how errors are handled]
+- **Module pattern**: [how modules are organized]
+
+---
+
+## 4. Development Process
+
+See `.claude/skills/gate-process.md` for the full 12-step workflow.
+
+Active steps for this profile:
+
+| Step | Active | Notes |
+|------|--------|-------|
+| 1. Analysis | | |
+| 2. Functional doc | | |
+| 3. Workflow doc | | |
+| 4. Plan | | |
+| 5. Unit test | | |
+| 6. Develop | | |
+| 7. API docs | | |
+| 8. Integration test | | |
+| 9. Parity test | | |
+| 10. E2E | | |
+| 11. Manuals | | |
+| 12. Security scan | | |
+
+---
+
+## 5. Rules for Claude
+
+### When writing code
+
+- TDD always: test FIRST, then code
+- No `any`: explicit types, generics, `unknown` + type guard
+- No `console.log`: use structured logger
+- Follow existing project conventions
+- Update this file after every feature
+
+### When porting (porting profile only)
+
+- Parity first — match legacy behaviour exactly, improve later
+- One block at a time — close and test before moving to next
+- If the new behaves differently from the old, it is a bug in the new
+
+### When building new (greenfield profile only)
+
+- YAGNI — build only what is needed now
+- Interface first — define contracts before implementation
+- Incremental delivery — smallest useful slice first
+
+---
+
+## 6. Development Index
+
+### Module Progress
+
+| Module | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | Complete? |
+|--------|---|---|---|---|---|---|---|---|---|----|----|-----|-----------|
+| [module] | | | | | | | | | | | | | NO |
+
+### Test Counts
+
+| Type | Count |
+|------|-------|
+| Unit test | 0 |
+| Integration test | 0 |
+| E2E test | 0 |
+| Parity test | 0 |
+| **Total** | **0** |
+
+### Security Findings
+
+| # | Severity | Module | Status | Description | Fix |
+|---|----------|--------|--------|-------------|-----|
+
+---
+
+## 7. Decisions
+
+| # | Decision | Answer |
+|---|----------|--------|
+| 1 | DB schema | |
+| 2 | Auth strategy | |
+| 3 | Error format | |
+| 4 | Deployment | |
+
+---
+
+## 8. Open Questions
+
+- [ ] [Question 1]
+- [ ] [Question 2]
+
+---
+
+## 9. Legacy Reference (porting profile only)
+
+The original source code is at `legacy/` in this repo.
+
+- Source files: `legacy/[path]/`
+- Key domains: [list]
+- Pattern: [describe the legacy architecture]

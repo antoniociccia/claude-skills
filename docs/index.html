@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>claude-skills — Development Framework for Claude Code</title>
+    <meta name="description" content="A configurable 12-step gate process with 4 project profiles, 6 skills, and 6 agents for Claude Code.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07070d;
+            --bg-card: #0e0e18;
+            --bg-card-hover: #141422;
+            --border: #1a1a2e;
+            --border-hover: #2a2a4e;
+            --text: #e0e0e8;
+            --text-muted: #8888a0;
+            --text-dim: #555570;
+            --primary: #00e5ff;
+            --primary-dim: #00a0b4;
+            --primary-glow: rgba(0, 229, 255, 0.15);
+            --secondary: #7c4dff;
+            --secondary-glow: rgba(124, 77, 255, 0.15);
+            --green: #00e676;
+            --green-dim: #00a854;
+            --green-glow: rgba(0, 230, 118, 0.15);
+            --red: #ff1744;
+            --red-dim: #b2102f;
+            --red-glow: rgba(255, 23, 68, 0.1);
+            --yellow: #ffea00;
+            --yellow-dim: #b4a500;
+            --orange: #ff9100;
+            --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) var(--bg);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+        /* Selection */
+        ::selection { background: var(--primary-glow); color: var(--primary); }
+
+        /* ---- NAV ---- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(7, 7, 13, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s;
+        }
+        nav:hover { border-bottom-color: var(--border-hover); }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+        .nav-logo span { color: var(--text-muted); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-github {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .nav-github:hover {
+            border-color: var(--primary);
+            color: var(--primary) !important;
+            background: var(--primary-glow);
+        }
+
+        /* ---- HERO ---- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: var(--primary-glow);
+            margin-bottom: 2rem;
+            animation: pulse-border 3s ease-in-out infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { border-color: var(--border); }
+            50% { border-color: var(--primary-dim); }
+        }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-family: var(--font-mono);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 .accent { color: var(--primary); }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-code {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-align: left;
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-code::before {
+            content: 'CLAUDE.md';
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            background: var(--border);
+            border-bottom-left-radius: 8px;
+        }
+        .hero-code .line {
+            display: block;
+            padding: 0.15rem 0;
+        }
+        .hero-code .comment { color: var(--text-dim); }
+        .hero-code .key { color: var(--primary); }
+        .hero-code .value { color: var(--green); }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+        }
+        .btn-primary:hover {
+            background: #33ebff;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        /* ---- SECTIONS ---- */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        /* ---- PROFILE CARDS ---- */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+        .profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+        .profile-card:hover, .profile-card.active {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+        }
+        .profile-card.active::before {
+            background: var(--primary);
+        }
+        .profile-card[data-profile="porting"].active::before { background: var(--primary); }
+        .profile-card[data-profile="greenfield"].active::before { background: var(--green); }
+        .profile-card[data-profile="bugfix"].active::before { background: var(--orange); }
+        .profile-card[data-profile="infra"].active::before { background: var(--secondary); }
+
+        .profile-name {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .profile-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .profile-steps {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        .profile-steps span {
+            color: var(--primary);
+        }
+        .profile-card[data-profile="greenfield"] .profile-steps span { color: var(--green); }
+        .profile-card[data-profile="bugfix"] .profile-steps span { color: var(--orange); }
+        .profile-card[data-profile="infra"] .profile-steps span { color: var(--secondary); }
+
+        /* ---- PIPELINE ---- */
+        .pipeline-section {
+            margin-top: 3rem;
+        }
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        .pipeline-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .pipeline-step .step-num {
+            display: block;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            margin-bottom: 0.3rem;
+        }
+        .pipeline-step .step-name {
+            display: block;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* Step states */
+        .pipeline-step.active {
+            border-color: var(--primary-dim);
+            background: var(--primary-glow);
+        }
+        .pipeline-step.active .step-name { color: var(--primary); }
+
+        .pipeline-step.gate {
+            border-color: var(--yellow-dim);
+            background: rgba(255, 234, 0, 0.05);
+        }
+        .pipeline-step.gate .step-name { color: var(--yellow); }
+        .pipeline-step.gate::after {
+            content: 'GATE';
+            position: absolute;
+            top: -8px;
+            right: 6px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            color: var(--bg);
+            background: var(--yellow);
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .pipeline-step.off {
+            opacity: 0.3;
+            border-style: dashed;
+        }
+
+        /* Profile-specific colors */
+        .pipeline.greenfield .pipeline-step.active {
+            border-color: var(--green-dim);
+            background: var(--green-glow);
+        }
+        .pipeline.greenfield .pipeline-step.active .step-name { color: var(--green); }
+
+        .pipeline.bugfix .pipeline-step.active {
+            border-color: rgba(255, 145, 0, 0.4);
+            background: rgba(255, 145, 0, 0.08);
+        }
+        .pipeline.bugfix .pipeline-step.active .step-name { color: var(--orange); }
+
+        .pipeline.infra .pipeline-step.active {
+            border-color: rgba(124, 77, 255, 0.4);
+            background: var(--secondary-glow);
+        }
+        .pipeline.infra .pipeline-step.active .step-name { color: var(--secondary); }
+
+        /* ---- SKILLS GRID ---- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+        .skill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .skill-card:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+        .skill-name {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.4rem;
+        }
+        .skill-step {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+        .skill-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ---- AGENTS GRID ---- */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+        .agent-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .agent-card:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+        .agent-name {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--green);
+            margin-bottom: 0.4rem;
+        }
+        .agent-model {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-glow);
+            border: 1px solid var(--green-dim);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+        .agent-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ---- MATRIX TABLE ---- */
+        .matrix-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-card);
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .matrix-table th {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        .matrix-table td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(26, 26, 46, 0.5);
+            white-space: nowrap;
+        }
+        .matrix-table tr:last-child td { border-bottom: none; }
+        .matrix-table tr:hover td { background: rgba(0, 229, 255, 0.02); }
+        .matrix-table .step-col {
+            font-family: var(--font-mono);
+            color: var(--text);
+            font-weight: 500;
+        }
+        .m-yes {
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+        .m-off {
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+        .m-cond {
+            color: var(--yellow);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+        .m-gate {
+            color: var(--yellow);
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        /* ---- IRON RULE ---- */
+        .iron-rule {
+            background: var(--bg-card);
+            border: 1px solid var(--red-dim);
+            border-left: 4px solid var(--red);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .iron-rule::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--red-glow);
+            pointer-events: none;
+        }
+        .iron-rule-title {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .iron-rule-text {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.7;
+            position: relative;
+        }
+        .iron-rule-text strong { color: var(--red); }
+
+        /* ---- FOOTER ---- */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--primary); }
+        .footer-copy {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* ---- SCROLL REVEAL ---- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 5rem 1.5rem 3rem; }
+            .hero h1 { font-size: 2rem; }
+            .hero-code { font-size: 0.75rem; padding: 1rem 1.25rem; }
+            section { padding: 3rem 1.5rem; }
+            .profiles-grid { grid-template-columns: 1fr; }
+            .pipeline { grid-template-columns: repeat(3, 1fr); }
+            .skills-grid, .agents-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">claude-skills <span>/</span> <span>framework</span></a>
+        <div class="nav-links">
+            <a href="#profiles">Profiles</a>
+            <a href="#pipeline">Pipeline</a>
+            <a href="#skills">Skills</a>
+            <a href="#agents">Agents</a>
+            <a href="#matrix">Matrix</a>
+            <a href="https://github.com/antoniociccia/claude-skills" class="nav-github">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                GitHub
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="badge">
+        <span class="badge-dot"></span>
+        v1.0 — Development Framework for Claude Code
+    </div>
+    <h1>
+        Structured <span class="accent">development</span><br>
+        for AI-assisted coding
+    </h1>
+    <p>
+        A configurable 12-step gate process with 4 project profiles,
+        6 step skills, and 6 specialized agents. Drop it into any project.
+        Pick a profile. Claude follows the process.
+    </p>
+    <div class="hero-code">
+        <span class="line"><span class="comment"># CLAUDE.md</span></span>
+        <span class="line"></span>
+        <span class="line"><span class="key">active_profile</span>: <span class="value">porting</span></span>
+        <span class="line"></span>
+        <span class="line"><span class="comment"># That's it. Claude reads the profile</span></span>
+        <span class="line"><span class="comment"># and enforces the gate process.</span></span>
+    </div>
+    <div class="hero-buttons">
+        <a href="https://github.com/antoniociccia/claude-skills" class="btn btn-primary">Get Started</a>
+        <a href="#profiles" class="btn btn-secondary">See Profiles</a>
+    </div>
+</section>
+
+<!-- PROFILES -->
+<section id="profiles">
+    <div class="reveal">
+        <div class="section-label">Profiles</div>
+        <h2 class="section-title">Four profiles, one framework</h2>
+        <p class="section-desc">
+            Each profile activates a subset of the 12 steps. Click a profile
+            to see its pipeline.
+        </p>
+    </div>
+    <div class="profiles-grid reveal">
+        <div class="profile-card active" data-profile="porting" onclick="selectProfile('porting')">
+            <div class="profile-name">porting</div>
+            <div class="profile-desc">Migrating from one stack to another. Legacy analysis, DB parity, API parity.</div>
+            <div class="profile-steps"><span>12</span> / 12 steps active</div>
+        </div>
+        <div class="profile-card" data-profile="greenfield" onclick="selectProfile('greenfield')">
+            <div class="profile-name">greenfield</div>
+            <div class="profile-desc">Building new features from scratch. YAGNI, interface-first, incremental delivery.</div>
+            <div class="profile-steps"><span>11</span> / 12 steps active</div>
+        </div>
+        <div class="profile-card" data-profile="bugfix" onclick="selectProfile('bugfix')">
+            <div class="profile-name">bugfix</div>
+            <div class="profile-desc">Fixing reported bugs. Reproduce first, regression test RED before fix.</div>
+            <div class="profile-steps"><span>6</span> / 12 steps active</div>
+        </div>
+        <div class="profile-card" data-profile="infra" onclick="selectProfile('infra')">
+            <div class="profile-name">infra</div>
+            <div class="profile-desc">DevOps, CI/CD, deployments. Current state audit, rollback strategy, runbook.</div>
+            <div class="profile-steps"><span>6</span> / 12 steps active</div>
+        </div>
+    </div>
+
+    <!-- PIPELINE VISUALIZATION -->
+    <div class="pipeline-section reveal" id="pipeline">
+        <div class="section-label">Pipeline</div>
+        <h2 class="section-title">Active steps for <span id="pipeline-profile-name" style="color:var(--primary)">porting</span></h2>
+        <div class="pipeline porting" id="pipeline-view">
+            <!-- Filled by JS -->
+        </div>
+    </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+    <div class="reveal">
+        <div class="section-label">Skills</div>
+        <h2 class="section-title">Step skills</h2>
+        <p class="section-desc">
+            Invoked automatically at the appropriate step. Each skill contains
+            templates, checklists, and guidelines.
+        </p>
+    </div>
+    <div class="skills-grid reveal">
+        <div class="skill-card">
+            <div class="skill-name">gate-process</div>
+            <div class="skill-step">Master controller</div>
+            <div class="skill-desc">Reads the active profile, enforces the step sequence, manages approval gates. The orchestrator.</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">functional-doc</div>
+            <div class="skill-step">Step 2</div>
+            <div class="skill-desc">Generates business requirement documents: rationale, actors, input/output, business rules, integration points.</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">workflow-doc</div>
+            <div class="skill-step">Step 3</div>
+            <div class="skill-desc">Generates step-by-step operational flows: API calls, DB state changes, error scenarios, edge cases.</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">parity-check</div>
+            <div class="skill-step">Step 9</div>
+            <div class="skill-desc">Dual-endpoint comparison. Response shape (keys + types, not values) and DB state after writes.</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">security-scan</div>
+            <div class="skill-step">Step 12</div>
+            <div class="skill-desc">10-item security checklist: input validation, auth, injection, data exposure, dependencies, audit trail.</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">manual-writing</div>
+            <div class="skill-step">Step 11</div>
+            <div class="skill-desc">Templates for developer manuals (API reference) and user manuals (plain language workflows).</div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-name">behaviour-test</div>
+            <div class="skill-step">Step 10</div>
+            <div class="skill-desc">E2E test guidelines: what to verify, anti-flaky principles, test structure, environment config.</div>
+        </div>
+    </div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents">
+    <div class="reveal">
+        <div class="section-label">Agents</div>
+        <h2 class="section-title">Specialized sub-agents</h2>
+        <p class="section-desc">
+            Delegated tasks. Each agent detects the project's stack and adapts.
+            Stack-agnostic by design.
+        </p>
+    </div>
+    <div class="agents-grid reveal">
+        <div class="agent-card">
+            <div class="agent-name">test-runner</div>
+            <div class="agent-model">sonnet</div>
+            <div class="agent-desc">Detect framework, run tests, classify failures (TEST_BUG, CODE_BUG, ENV_ISSUE, FLAKY), fix broken tests.</div>
+        </div>
+        <div class="agent-card">
+            <div class="agent-name">manual-writer</div>
+            <div class="agent-model">haiku</div>
+            <div class="agent-desc">Analyze completed code, generate developer manual (API reference) and user manual (plain language guide).</div>
+        </div>
+        <div class="agent-card">
+            <div class="agent-name">legacy-analyzer</div>
+            <div class="agent-model">sonnet</div>
+            <div class="agent-desc">Analyze any legacy codebase in any language. Extract API contracts, business rules, DB operations.</div>
+        </div>
+        <div class="agent-card">
+            <div class="agent-name">parity-tester</div>
+            <div class="agent-model">sonnet</div>
+            <div class="agent-desc">Generate dual-endpoint parity test scripts. Compare response shape and DB state between v1 and v2.</div>
+        </div>
+        <div class="agent-card">
+            <div class="agent-name">swagger-generator</div>
+            <div class="agent-model">sonnet</div>
+            <div class="agent-desc">Detect API framework (NestJS, Express, Flask, Spring, Go), generate complete OpenAPI annotations.</div>
+        </div>
+        <div class="agent-card">
+            <div class="agent-name">security-scanner</div>
+            <div class="agent-model">sonnet</div>
+            <div class="agent-desc">Framework-aware static analysis. 10 security checks with severity ratings and actionable recommendations.</div>
+        </div>
+    </div>
+</section>
+
+<!-- MATRIX -->
+<section id="matrix">
+    <div class="reveal">
+        <div class="section-label">Activation Matrix</div>
+        <h2 class="section-title">Full step activation table</h2>
+        <p class="section-desc">
+            Which steps are active for each profile. Gates cannot be skipped when a step is active.
+        </p>
+    </div>
+    <div class="matrix-wrapper reveal">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Step</th>
+                    <th>Porting</th>
+                    <th>Greenfield</th>
+                    <th>Bugfix</th>
+                    <th>Infra</th>
+                    <th>Gate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="step-col">1</td>
+                    <td class="step-col">Analysis</td>
+                    <td class="m-yes">legacy</td>
+                    <td class="m-yes">codebase</td>
+                    <td class="m-yes">reproduce</td>
+                    <td class="m-yes">audit</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">2</td>
+                    <td class="step-col">Functional Doc</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                    <td class="m-gate">APPROVAL</td>
+                </tr>
+                <tr>
+                    <td class="step-col">3</td>
+                    <td class="step-col">Workflow Doc</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                    <td class="m-gate">APPROVAL</td>
+                </tr>
+                <tr>
+                    <td class="step-col">4</td>
+                    <td class="step-col">Plan</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-gate">APPROVAL</td>
+                </tr>
+                <tr>
+                    <td class="step-col">5</td>
+                    <td class="step-col">Unit Test (TDD)</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">6</td>
+                    <td class="step-col">Develop</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">7</td>
+                    <td class="step-col">API Docs</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-cond">if changed</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">8</td>
+                    <td class="step-col">Integration Test</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">validate</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">9</td>
+                    <td class="step-col">Parity Test</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                    <td class="m-off">--</td>
+                    <td class="m-gate">ALL GREEN</td>
+                </tr>
+                <tr>
+                    <td class="step-col">10</td>
+                    <td class="step-col">E2E / Behaviour</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-cond">optional</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">11</td>
+                    <td class="step-col">Manuals</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                    <td class="m-yes">runbook</td>
+                    <td class="m-off">--</td>
+                </tr>
+                <tr>
+                    <td class="step-col">12</td>
+                    <td class="step-col">Security Scan</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-cond">if security</td>
+                    <td class="m-yes">YES</td>
+                    <td class="m-off">--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- IRON RULE -->
+    <div class="iron-rule reveal">
+        <div class="iron-rule-title">The Iron Rule</div>
+        <div class="iron-rule-text">
+            <strong>No block of work is complete until ALL active steps for the profile are done.</strong>
+            If a step is active and not done, the work is INCOMPLETE. Do not move to the next block
+            until all steps for the current block are verified. Gates are rigid. When a step is active,
+            its gate cannot be skipped.
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-links">
+            <a href="https://github.com/antoniociccia/claude-skills">GitHub</a>
+            <a href="https://github.com/antoniociccia/claude-skills#quick-start">Quick Start</a>
+            <a href="https://github.com/antoniociccia/claude-skills/tree/main/examples">Examples</a>
+            <a href="https://github.com/antoniociccia/claude-skills/blob/main/LICENSE">MIT License</a>
+        </div>
+        <div class="footer-copy">
+            claude-skills — Development Framework for Claude Code
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Pipeline data per profile
+    const pipelines = {
+        porting: [
+            { num: 1, name: 'Analysis', state: 'active' },
+            { num: 2, name: 'Func Doc', state: 'gate' },
+            { num: 3, name: 'Workflow', state: 'gate' },
+            { num: 4, name: 'Plan', state: 'gate' },
+            { num: 5, name: 'Unit Test', state: 'active' },
+            { num: 6, name: 'Develop', state: 'active' },
+            { num: 7, name: 'API Docs', state: 'active' },
+            { num: 8, name: 'Int. Test', state: 'active' },
+            { num: 9, name: 'Parity', state: 'gate' },
+            { num: 10, name: 'E2E', state: 'active' },
+            { num: 11, name: 'Manuals', state: 'active' },
+            { num: 12, name: 'Security', state: 'active' }
+        ],
+        greenfield: [
+            { num: 1, name: 'Analysis', state: 'active' },
+            { num: 2, name: 'Func Doc', state: 'gate' },
+            { num: 3, name: 'Workflow', state: 'gate' },
+            { num: 4, name: 'Plan', state: 'gate' },
+            { num: 5, name: 'Unit Test', state: 'active' },
+            { num: 6, name: 'Develop', state: 'active' },
+            { num: 7, name: 'API Docs', state: 'active' },
+            { num: 8, name: 'Int. Test', state: 'active' },
+            { num: 9, name: 'Parity', state: 'off' },
+            { num: 10, name: 'E2E', state: 'active' },
+            { num: 11, name: 'Manuals', state: 'active' },
+            { num: 12, name: 'Security', state: 'active' }
+        ],
+        bugfix: [
+            { num: 1, name: 'Reproduce', state: 'active' },
+            { num: 2, name: 'Func Doc', state: 'off' },
+            { num: 3, name: 'Workflow', state: 'off' },
+            { num: 4, name: 'Plan', state: 'gate' },
+            { num: 5, name: 'Reg. Test', state: 'active' },
+            { num: 6, name: 'Fix', state: 'active' },
+            { num: 7, name: 'API Docs', state: 'off' },
+            { num: 8, name: 'Int. Test', state: 'active' },
+            { num: 9, name: 'Parity', state: 'off' },
+            { num: 10, name: 'E2E', state: 'active' },
+            { num: 11, name: 'Manuals', state: 'off' },
+            { num: 12, name: 'Security', state: 'off' }
+        ],
+        infra: [
+            { num: 1, name: 'Audit', state: 'active' },
+            { num: 2, name: 'Func Doc', state: 'off' },
+            { num: 3, name: 'Workflow', state: 'off' },
+            { num: 4, name: 'Plan', state: 'gate' },
+            { num: 5, name: 'Unit Test', state: 'off' },
+            { num: 6, name: 'Implement', state: 'active' },
+            { num: 7, name: 'API Docs', state: 'off' },
+            { num: 8, name: 'Validate', state: 'active' },
+            { num: 9, name: 'Parity', state: 'off' },
+            { num: 10, name: 'Smoke', state: 'off' },
+            { num: 11, name: 'Runbook', state: 'active' },
+            { num: 12, name: 'Security', state: 'active' }
+        ]
+    };
+
+    const profileColors = {
+        porting: 'var(--primary)',
+        greenfield: 'var(--green)',
+        bugfix: 'var(--orange)',
+        infra: 'var(--secondary)'
+    };
+
+    function selectProfile(name) {
+        // Update cards
+        document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('active'));
+        document.querySelector(`[data-profile="${name}"]`).classList.add('active');
+
+        // Update pipeline title
+        const titleSpan = document.getElementById('pipeline-profile-name');
+        titleSpan.textContent = name;
+        titleSpan.style.color = profileColors[name];
+
+        // Render pipeline
+        const view = document.getElementById('pipeline-view');
+        view.className = `pipeline ${name}`;
+        view.innerHTML = pipelines[name].map(step => `
+            <div class="pipeline-step ${step.state}">
+                <span class="step-num">${step.num}</span>
+                <span class="step-name">${step.name}</span>
+            </div>
+        `).join('');
+    }
+
+    // Init
+    selectProfile('porting');
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
